@@ -1,32 +1,148 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <link rel="stylesheet" href="style.css" />
-
-    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
 
     <title>Ocean Eyes App</title>
+
+    <link href="style.css" rel="stylesheet" />
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet" />
+
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
 </head>
 <body>
-    <h1 class="text-white text-3xl font-bold">
-        Ocean Eyes App
-    </h1>
-    <br>
-
-    <div id="progress-container">
-        <dialog open id="progress-dialog">
-            <p>
-                <label for="progress-indicator">Loading scene...</label>
-            </p>
-            <progress max="100" id="progress-indicator"></progress>
-        </dialog>
+    <div class="closebutton">
+        <button onclick="closeFullscreen()">Close</button>
     </div>
+    <div class="fullscreen"></div>
+    <div id="map"></div>
 
-    <canvas id="canvas"></canvas>
-    <script src="script.js" type="module"></script>
-    
+<script>
+	mapboxgl.accessToken = 'pk.eyJ1Ijoiam9yZGFud2hpdGUiLCJhIjoiY2ozNmE2bXhyMDRkbTMzbnJsZzNrZmlvMiJ9.2J3XwB0Ck03zrijQ3nvryw';
+    const map = new mapboxgl.Map({
+        container: 'map',
+        // Custom Mapbox style: "Satellite 2" on Jordan's Mapbox account
+        style: 'mapbox://styles/jordanwhite/clvq8u43c00uj01rd5i1seb2i',
+        center: [-122.386, 37.760],
+        zoom: 11.50
+    });
+
+    map.on('load', () => {
+        map.addSource('places', {
+            // This GeoJSON contains features that include an "icon"
+            // property. The value of the "icon" property corresponds
+            // to an image in the Mapbox Streets style's sprite.
+            'type': 'geojson',
+            'data': {
+                'type': 'FeatureCollection',
+                'features': [
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'description': '',
+                            'splat_url': 'https://www.oceaneyes.app/splats/lego.splat',
+                            'icon': 'aquarium'
+                        },
+                        'geometry': {
+                            'type': 'Point',
+                            'coordinates': [-122.38949255075538, 37.777011370611774]
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'description': '',
+                            'splat_url': 'garden.splat',
+                            'icon': 'garden'
+                        },
+                        'geometry': {
+                            'type': 'Point',
+                            'coordinates': [-77.003168, 38.894651]
+                        }
+                    },
+                ]
+            }
+        });
+        
+        // Add a layer showing the places.
+        map.addLayer({
+            'id': 'places',
+            'type': 'symbol',
+            'source': 'places',
+            'layout': {
+                'icon-image': ['get', 'icon'],
+                'icon-allow-overlap': true
+            }
+        });
+
+        // When a click event occurs on a feature in the places layer, open a popup at the
+        // location of the feature, with description HTML from its properties.
+        map.on('click', 'places', (e) => {
+            // Copy coordinates array.
+            const coordinates = e.features[0].geometry.coordinates.slice();
+            const description = e.features[0].properties.description;
+            const splat_url = e.features[0].properties.splat_url;
+
+            // Ensure that if the map is zoomed out such that multiple
+            // copies of the feature are visible, the popup appears
+            // over the copy being pointed to.
+            while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+            }
+
+            // console.log(coordinates)
+            // console.log(description)
+            // console.log(splat_url)
+            // console.log(map)
+            // console.log('\n')
+
+            showFullscreen(splat_url);
+
+            // new mapboxgl.Popup()
+            //     .setLngLat(coordinates)
+            //     .setHTML(description)
+            //     .addTo(map);
+        });
+
+        // Change the cursor to a pointer when the mouse is over the places layer.
+        map.on('mouseenter', 'places', () => {
+            map.getCanvas().style.cursor = 'pointer';
+        });
+
+        // Change it back to a pointer when it leaves.
+        map.on('mouseleave', 'places', () => {
+            map.getCanvas().style.cursor = '';
+        });
+    });
+
+    function showFullscreen(splat) {
+        console.log('showFullscreen()');
+        console.log(splat);
+        
+        let url = 'https://antimatter15.com/splat/?url=' + splat;
+
+        console.log('This is the URL');
+        console.log(url);
+        
+        // $('.fullscreen').html('<iframe src="https://antimatter15.com/splat/?url=https://www.oceaneyes.app/splats/lego.splat" frameborder="0"></iframe>');
+        
+        let iframe = '<iframe src="' + url + '" frameborder="0"></iframe>'
+        $('.fullscreen').html(iframe);
+        
+        $('.fullscreen').show()
+        $('.closebutton').show();
+    }
+
+    function closeFullscreen() {
+        console.log('closeFullscreen()');
+        $('.closebutton').hide();
+        $('.fullscreen').hide();
+    }
+</script>
+
 </body>
 </html>
