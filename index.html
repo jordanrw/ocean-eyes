@@ -28,7 +28,7 @@
         // Custom Mapbox style: "Satellite 2" on Jordan's Mapbox account
         style: 'mapbox://styles/jordanwhite/clvq8u43c00uj01rd5i1seb2i',
         center: [-122.386, 37.760],
-        zoom: 11.50
+        zoom: 6.50
     });
 
     map.on('load', () => {
@@ -40,30 +40,54 @@
             'data': {
                 'type': 'FeatureCollection',
                 'features': [
-                    {
+                    { // Rock - Monterey, CA
                         'type': 'Feature',
                         'properties': {
                             'description': '',
-                            'splat_url': 'https://www.oceaneyes.app/splats/lego.splat',
+                            'splat_url': '/splats/rocks.html',
                             'icon': 'aquarium'
                         },
                         'geometry': {
                             'type': 'Point',
-                            'coordinates': [-122.38949255075538, 37.777011370611774]
+                            'coordinates': [-121.89377876657208, 36.608991803975556]
                         }
                     },
-                    {
+                    { // Chair - Florida
                         'type': 'Feature',
                         'properties': {
                             'description': '',
-                            'splat_url': 'garden.splat',
-                            'icon': 'garden'
+                            'splat_url': '/splats/chair.html',
+                            'icon': 'aquarium'
                         },
                         'geometry': {
                             'type': 'Point',
-                            'coordinates': [-77.003168, 38.894651]
+                            'coordinates': [-81.72422339242883, 25.936572929233492]
                         }
                     },
+                    { // Bait Bin - Florida
+                        'type': 'Feature',
+                        'properties': {
+                            'description': '',
+                            'splat_url': '/splats/bait-bin.html',
+                            'icon': 'aquarium'
+                        },
+                        'geometry': {
+                            'type': 'Point',
+                            'coordinates': [-81.72427232279058, 25.936578852722914]
+                        }
+                    },
+                    { // Box - Florida
+                        'type': 'Feature',
+                        'properties': {
+                            'description': '',
+                            'splat_url': '/splats/box.html',
+                            'icon': 'aquarium'
+                        },
+                        'geometry': {
+                            'type': 'Point',
+                            'coordinates': [-81.72431963483989, 25.93658808011488]
+                        }
+                    }
                 ]
             }
         });
@@ -101,11 +125,6 @@
             // console.log('\n')
 
             showFullscreen(splat_url);
-
-            // new mapboxgl.Popup()
-            //     .setLngLat(coordinates)
-            //     .setHTML(description)
-            //     .addTo(map);
         });
 
         // Change the cursor to a pointer when the mouse is over the places layer.
@@ -119,18 +138,11 @@
         });
     });
 
-    function showFullscreen(splat) {
+    function showFullscreen(splat_url) {
         console.log('showFullscreen()');
-        console.log(splat);
+        console.log(splat_url);
         
-        let url = 'https://antimatter15.com/splat/?url=' + splat;
-
-        console.log('This is the URL');
-        console.log(url);
-        
-        // $('.fullscreen').html('<iframe src="https://antimatter15.com/splat/?url=https://www.oceaneyes.app/splats/lego.splat" frameborder="0"></iframe>');
-        
-        let iframe = '<iframe src="' + url + '" frameborder="0"></iframe>'
+        let iframe = '<iframe src="' + splat_url + '" frameborder="0"></iframe>'
         $('.fullscreen').html(iframe);
         
         $('.fullscreen').show()
